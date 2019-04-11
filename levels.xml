@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<levels>
+    <level_1>
+        <name>Level 1</name>
+        <rows>
+            <row1>
+                <type>uniform</type>
+                <enemy_class>BasicDrone</enemy_class>
+            </row1>
+        </rows>
+    </level_1>
+</levels>
