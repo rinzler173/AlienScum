@@ -22,6 +22,7 @@ class Gameplay:
         Gameplay.running = True
         Gameplay.can_restart = False
         Gameplay.manage_death = False
+        Gameplay.god_mode = Game.god_mode
         Gameplay.current_level = 1
         Gameplay.screen = pygame.display.set_mode(Game.screen_res)
         pygame.display.set_caption(Game.caption)
@@ -45,19 +46,20 @@ class Gameplay:
 
         Gameplay.enemy_rows = []
         Gameplay.UfoTestRow = []
-        Gameplay.UfoTestRow.append(Ufo(Gameplay.screen, 672, 185,
-                                       Gameplay.all_sprites, Gameplay.enemy_bullets, Gameplay.player))
+        Gameplay.UfoTestRow.append(Ufo(Gameplay.screen, 672, 185, Gameplay.all_sprites,
+                                       Gameplay.enemy_bullets, Gameplay.player, Gameplay.enemy_sprites))
         Gameplay.TrishotTestRow = []
-        Gameplay.TrishotTestRow.append(TrishotDrone(Gameplay.screen, 672, 185,
-                                       Gameplay.all_sprites, Gameplay.enemy_bullets))
+        Gameplay.TrishotTestRow.append(TrishotDrone(Gameplay.screen, 672, 185, Gameplay.all_sprites,
+                                                    Gameplay.enemy_bullets, Gameplay.enemy_sprites))
         Gameplay.BomberTestRow = []
-        Gameplay.BomberTestRow.append(BomberDrone(Gameplay.screen, 672, 185,
-                                                    Gameplay.all_sprites, Gameplay.enemy_bullets))
+        Gameplay.BomberTestRow.append(BomberDrone(Gameplay.screen, 672, 185, Gameplay.all_sprites,
+                                                  Gameplay.enemy_bullets, Gameplay.enemy_sprites))
         #Gameplay.enemy_rows.append(Gameplay.UfoTestRow)
         #Gameplay.enemy_rows.append(Gameplay.TrishotTestRow)
         Gameplay.enemy_rows.append(Gameplay.BomberTestRow)
         #Gameplay.enemy_rows.append(Gameplay.get_uniform_row(self, BasicDrone, 0))
-        Gameplay.spawn_enemies(self, Gameplay.enemy_rows)
+        Gameplay.read_xml(self)
+        #Gameplay.spawn_enemies(self, Gameplay.enemy_rows)
 
     def run_gameplay(self):
         # Game loop
@@ -118,13 +120,13 @@ class Gameplay:
     # returns list representing the row
     # rows above argument should be combined height of all rows above (without margins)
     def get_uniform_row(self, enemy_class, rows_above):
-        enemy = enemy_class(Gameplay.screen, 0, 0, Gameplay.all_sprites, Gameplay.enemy_bullets)
+        enemy = enemy_class(Gameplay.screen, 0, 0, Gameplay.all_sprites, Gameplay.enemy_bullets, Gameplay.enemy_sprites)
         y_margin = Gameplay.screen.get_rect().width * .05
         fittable_enemies = int(Gameplay.screen.get_rect().width / (enemy.rect.width * 2))
         uniform_row = []
         for index in range(fittable_enemies):
-            uniform_row.append(enemy_class(Gameplay.screen, enemy.rect.width+(enemy.rect.width*2*index), y_margin+rows_above + rows_above * y_margin,
-                                           Gameplay.all_sprites, Gameplay.enemy_bullets))
+            uniform_row.append(enemy_class(Gameplay.screen, enemy.rect.width+(enemy.rect.width*2*index), y_margin + rows_above * y_margin * 2,
+                                           Gameplay.all_sprites, Gameplay.enemy_bullets, Gameplay.enemy_sprites))
         return uniform_row
 
     # makes enemies from all given rows join the game
@@ -140,15 +142,14 @@ class Gameplay:
             hit.onDestroy()
             Gameplay.player_score.score_kill(hit)
             if len(Gameplay.enemy_sprites) == 0:
-                win = Msg(Gameplay.screen, Gameplay.interface_font, 100, 175, 2, RGB.GREEN, "Victory!", Msg.MSG_PULSE)
                 Gameplay.all_sprites.add(Gameplay.win_msg)
 
-        hits = pygame.sprite.groupcollide(Gameplay.player_sprites, Gameplay.enemy_bullets, True, True)
-        for hit in hits:
-            hit.onDestroy()
-            fail = Msg(Gameplay.screen, Gameplay.interface_font, 100, 175, 2, RGB.RED, "Game Over!", Msg.MSG_FADE)
-            Gameplay.all_sprites.add(Gameplay.fail_msg)
-            Gameplay.manage_death = True
+        if not Gameplay.god_mode:
+            hits = pygame.sprite.groupcollide(Gameplay.player_sprites, Gameplay.enemy_bullets, True, True)
+            for hit in hits:
+                hit.onDestroy()
+                Gameplay.all_sprites.add(Gameplay.fail_msg)
+                Gameplay.manage_death = True
 
     # deletes sprites gone out of screen
     def delete_invisible(self):
@@ -165,13 +166,22 @@ class Gameplay:
             Gameplay.manage_death = False
 
 
-    def spawn_enemies(self):
+    def read_xml(self):
         xml_path = os.path.join(os.path.dirname(__file__), Game.lvl_desc_file)
         tree = et.parse(xml_path)
         lvl_name = "level_"+str(Gameplay.current_level)
-        root = tree.getroot()
-        lvl = root.find('./level_1')
-        for uni_row in lvl.iter('uniform'):
+        levels = tree.getroot()
+        lvl = None
+        for level in levels:
+            if level.attrib['name'] == lvl_name:
+                lvl = level
+        rows_xml = lvl.find('rows')
+        rows = []
+        for row_xml in rows_xml:
+            if row_xml.find('type').text == 'uniform':
+                rows.append(Gameplay.get_uniform_row(self, eval(row_xml.find('enemy_class').text), len(rows)))
+
+        Gameplay.spawn_enemies(self, rows)
             
 
 

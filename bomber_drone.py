@@ -5,8 +5,8 @@ from settings import BomberDroneConfig as config
 
 
 class BomberDrone(Enemy):
-    def __init__(self, screen, spawn_x, spawn_y, all_sprites, bullet_sprites):
-        super().__init__(screen, spawn_x, spawn_y, config, all_sprites, bullet_sprites)
+    def __init__(self, screen, spawn_x, spawn_y, all_sprites, bullet_sprites, friendlies_sprites):
+        super().__init__(screen, spawn_x, spawn_y, config, all_sprites, bullet_sprites, friendlies_sprites)
         self.bullet_anim = []
         for frame_name in self.config.bullet_frames:
             self.bullet_anim.append(load_image(frame_name))

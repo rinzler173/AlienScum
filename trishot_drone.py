@@ -4,8 +4,8 @@ from bullet import Bullet
 
 
 class TrishotDrone(Enemy):
-    def __init__(self, screen, spawn_x, spawn_y, all_sprites, bullet_sprites):
-        super().__init__(screen, spawn_x, spawn_y, config, all_sprites, bullet_sprites)
+    def __init__(self, screen, spawn_x, spawn_y, all_sprites, bullet_sprites, friendlies_sprites):
+        super().__init__(screen, spawn_x, spawn_y, config, all_sprites, bullet_sprites, friendlies_sprites)
 
     def getShot(self):
         shot = super().getShot()

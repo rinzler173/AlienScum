@@ -3,8 +3,8 @@ from guided_bullet import GuidedBullet
 from settings import UfoConfig as config
 
 class Ufo(Enemy):
-    def __init__(self, screen, spawn_x, spawn_y, all_sprites, bullet_sprites, player):
-        super().__init__(screen, spawn_x, spawn_y, config, all_sprites, bullet_sprites)
+    def __init__(self, screen, spawn_x, spawn_y, all_sprites, bullet_sprites, player, friendlies_sprites):
+        super().__init__(screen, spawn_x, spawn_y, config, all_sprites, bullet_sprites, friendlies_sprites)
         self.player = player
 
     def getShot(self):

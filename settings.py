@@ -12,6 +12,7 @@ class Game:
     interface_font_name = 'arial'
     lvl_desc_file = "levels.xml"
     FPS = 60
+    god_mode = True  # for testing only
     min_expl_vel = -10
     max_expl_vel = 10
     min_expl_rot = -8
