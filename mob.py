@@ -1,7 +1,7 @@
 from pygame.sprite import Sprite
 from pygame.sprite import Group
 from ship_fragment import ShipFragment as sf
-from explosion import Explosion
+from animation import Animation
 from utils import load_image
 from utils import load_sound
 import os
@@ -52,7 +52,7 @@ class Mob(Sprite):
 
     def onDestroy(self):
         random.choice(self.death_sounds).play()
-        self.all_sprites.add(Explosion(self.screen, self.explosion_animation, self.rect.centerx, self.rect.centery))
+        self.all_sprites.add(Animation(self.screen, self.explosion_animation, self.rect.centerx, self.rect.centery))
         for frag in self.getRandomDebries():
             self.all_sprites.add(frag)
         self.kill()
