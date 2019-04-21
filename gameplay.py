@@ -143,6 +143,7 @@ class Gameplay:
             Gameplay.player_score.score_kill(hit)
             if len(Gameplay.enemy_sprites) == 0:
                 Gameplay.all_sprites.add(Gameplay.win_msg)
+                Gameplay.player.fly_away()
 
         if not Gameplay.god_mode:
             hits = pygame.sprite.groupcollide(Gameplay.player_sprites, Gameplay.enemy_bullets, True, True)

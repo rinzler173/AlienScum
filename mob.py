@@ -26,10 +26,6 @@ class Mob(Sprite):
         for death_file in config.death_sound_files:
             sound = load_sound(death_file)
             self.death_sounds.append(sound)
-        self.explosion_animation = []
-        for explosion_frame in range(self.config.explosion_frames):
-            frame = load_image(self.config.explosion_img_prefix + str(explosion_frame) + '.png')
-            self.explosion_animation.append(frame)
 
         # optional (but common)
         if hasattr(config, 'bullet_img_file'):
@@ -52,7 +48,7 @@ class Mob(Sprite):
 
     def onDestroy(self):
         random.choice(self.death_sounds).play()
-        self.all_sprites.add(Animation(self.screen, self.explosion_animation, self.rect.centerx, self.rect.centery))
+        self.all_sprites.add(Animation(self.screen, self.config.explosion_anim_dir, self.rect.centerx, self.rect.centery))
         for frag in self.getRandomDebries():
             self.all_sprites.add(frag)
         self.kill()

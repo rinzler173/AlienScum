@@ -1,9 +1,8 @@
 from mob import Mob
 from bullet import Bullet
 from settings import Config
-from animation import Animation
+from jet_animation import JetAnimation
 import random
-import pygame
 
 
 class Player(Mob):
@@ -37,6 +36,8 @@ class Player(Mob):
 
             self.rect.centerx = self.centerx
             self.rect.centery = self.centery
+        else:
+            self.rect.centery -= 5.0
 
     # returns bullet entity that can be added to sprites group
     def shoot(self):
@@ -46,7 +47,9 @@ class Player(Mob):
 
     #  after completing a level
     def fly_away(self):
-        gone = pygame.Surface(0, 0)  # empty frame for blinking effect
+        self.departing = True
+        self.all_sprites.add(JetAnimation(self.screen, self.config.jet_anim_dir, self))
+
 
 
 

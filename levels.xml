@@ -7,14 +7,14 @@
                 <type>uniform</type>
                 <enemy_class>BasicDrone</enemy_class>
             </row>
-            <row name="row_2">
+            <!--<row name="row_2">
                 <type>uniform</type>
                 <enemy_class>BomberDrone</enemy_class>
             </row>
             <row name="row_ 3">
                 <type>uniform</type>
                 <enemy_class>BasicDrone</enemy_class>
-            </row>
+            </row>-->
         </rows>
     </level>
 </levels>
