@@ -1,6 +1,7 @@
 from bullet import Bullet
 import pygame
 
+
 class Bomb(Bullet):
     def __init__(self, image, screen, shooter_rect, speed, animation_frames, rotation=0):
         super().__init__(image, screen, shooter_rect, speed, rotation)

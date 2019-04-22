@@ -24,6 +24,8 @@ class Gameplay:
         Gameplay.manage_death = False
         Gameplay.god_mode = Game.god_mode
         Gameplay.current_level = 1
+        Gameplay.sounds = {}
+        Gameplay.sounds['level_completed'] = utils.load_sound('level_completed.wav')
         Gameplay.screen = pygame.display.set_mode(Game.screen_res)
         pygame.display.set_caption(Game.caption)
         Gameplay.interface_font = pygame.font.match_font(Game.interface_font_name)
@@ -45,21 +47,7 @@ class Gameplay:
         Gameplay.player_bullets = pygame.sprite.Group()
 
         Gameplay.enemy_rows = []
-        Gameplay.UfoTestRow = []
-        Gameplay.UfoTestRow.append(Ufo(Gameplay.screen, 672, 185, Gameplay.all_sprites,
-                                       Gameplay.enemy_bullets, Gameplay.player, Gameplay.enemy_sprites))
-        Gameplay.TrishotTestRow = []
-        Gameplay.TrishotTestRow.append(TrishotDrone(Gameplay.screen, 672, 185, Gameplay.all_sprites,
-                                                    Gameplay.enemy_bullets, Gameplay.enemy_sprites))
-        Gameplay.BomberTestRow = []
-        Gameplay.BomberTestRow.append(BomberDrone(Gameplay.screen, 672, 185, Gameplay.all_sprites,
-                                                  Gameplay.enemy_bullets, Gameplay.enemy_sprites))
-        #Gameplay.enemy_rows.append(Gameplay.UfoTestRow)
-        #Gameplay.enemy_rows.append(Gameplay.TrishotTestRow)
-        Gameplay.enemy_rows.append(Gameplay.BomberTestRow)
-        #Gameplay.enemy_rows.append(Gameplay.get_uniform_row(self, BasicDrone, 0))
         Gameplay.read_xml(self)
-        #Gameplay.spawn_enemies(self, Gameplay.enemy_rows)
 
     def run_gameplay(self):
         # Game loop
@@ -143,6 +131,7 @@ class Gameplay:
             Gameplay.player_score.score_kill(hit)
             if len(Gameplay.enemy_sprites) == 0:
                 Gameplay.all_sprites.add(Gameplay.win_msg)
+                Gameplay.sounds['level_completed'].play()
                 Gameplay.player.fly_away()
 
         if not Gameplay.god_mode:
@@ -165,7 +154,6 @@ class Gameplay:
             prompt = Msg(Gameplay.screen, Gameplay.interface_font, 40, 50, 1, RGB.GREEN, "Press R to restart!", Msg.MSG_PULSE)
             Gameplay.all_sprites.add(prompt)
             Gameplay.manage_death = False
-
 
     def read_xml(self):
         xml_path = os.path.join(os.path.dirname(__file__), Game.lvl_desc_file)
