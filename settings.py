@@ -11,6 +11,7 @@ class Game:
     background_img_file = 'background.png'
     interface_font_name = 'arial'
     lvl_desc_file = "levels.xml"
+    levels = 3
     FPS = 60
     god_mode = True  # for testing only
     min_expl_vel = -10

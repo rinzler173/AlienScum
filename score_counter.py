@@ -3,10 +3,10 @@ from pygame.font import Font
 
 
 class ScoreCounter(Sprite):
-    def __init__(self, player, screen, font_name, size, color):
+    def __init__(self, player, score, screen, font_name, size, color):
         super(ScoreCounter, self).__init__()
         self.screen = screen
-        self.score = 0
+        self.score = score
         self.color = color
         self.font = Font(font_name, size)
         self.image = self.font.render(str(self.score), True, self.color)

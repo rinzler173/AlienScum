@@ -7,14 +7,38 @@
                 <type>uniform</type>
                 <enemy_class>BasicDrone</enemy_class>
             </row>
-            <!--<row name="row_2">
+            <row name="row_ 2">
+                <type>uniform</type>
+                <enemy_class>BasicDrone</enemy_class>
+            </row>
+        </rows>
+    </level>
+    <level name="level_2">
+        <rows>
+            <row name="row_1">
+                <type>uniform</type>
+                <enemy_class>BasicDrone</enemy_class>
+            </row>
+            <row name="row_2">
                 <type>uniform</type>
                 <enemy_class>BomberDrone</enemy_class>
             </row>
-            <row name="row_ 3">
+        </rows>
+    </level>
+    <level name="level_3">
+        <rows>
+            <row name="row_1">
+                <type>uniform</type>
+                <enemy_class>BomberDrone</enemy_class>
+            </row>
+            <row name="row_2">
                 <type>uniform</type>
                 <enemy_class>BasicDrone</enemy_class>
-            </row>-->
+            </row>
+            <row name="row_3">
+                <type>uniform</type>
+                <enemy_class>BomberDrone</enemy_class>
+            </row>
         </rows>
     </level>
 </levels>
