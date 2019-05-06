@@ -4,9 +4,8 @@ import pygame
 """Stores most crucial game settings"""
 
 # environment settings
-screen_res = 1344, 756
 class Game:
-    screen_res = 1344, 756  # full hd * 0,7
+    screen_res = 1536, 864  # full hd * 0,8
     caption = 'Alien Scum'
     background_img_file = 'background.png'
     interface_font_name = 'arial'
@@ -31,9 +30,9 @@ class Config:
     jet_anim_dir = 'jet_1'
     speed = 7.5
     bullet_speed = 100.0
-    vertical_leeway = screen_res[1] * .015
-    horizontal_margin = screen_res[0] * .02
-    bottom_margin = screen_res[1] * .03
+    vertical_leeway = Game.screen_res[1] * .015
+    horizontal_margin = Game.screen_res[0] * .02
+    bottom_margin = Game.screen_res[1] * .03
 
 
 class BasicDroneConfig:

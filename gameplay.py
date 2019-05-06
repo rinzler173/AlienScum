@@ -126,13 +126,39 @@ class Gameplay:
     # rows above argument should be combined height of all rows above (without margins)
     def get_uniform_row(self, enemy_class, rows_above):
         enemy = enemy_class(Gameplay.screen, 0, 0, Gameplay.all_sprites, Gameplay.enemy_bullets, Gameplay.enemy_sprites)
-        y_margin = Gameplay.screen.get_rect().width * .05
+        y_margin = Gameplay.screen.get_rect().height * .09
         fittable_enemies = int(Gameplay.screen.get_rect().width / (enemy.rect.width * 2))
         uniform_row = []
         for index in range(fittable_enemies):
             uniform_row.append(enemy_class(Gameplay.screen, enemy.rect.width+(enemy.rect.width*2*index), y_margin + rows_above * y_margin * 2,
                                            Gameplay.all_sprites, Gameplay.enemy_bullets, Gameplay.enemy_sprites))
         return uniform_row
+
+    def get_mixed_row(self, enemy_classes, rows_above):
+        mixed_row = []
+        y_margin = Gameplay.screen.get_rect().height * .09
+        x_margin = 0
+        screen_width = Gameplay.screen.get_rect().width
+        enemies_width = 0
+        for enemy_class in enemy_classes:
+            if enemy_class == Ufo:
+                enemy = enemy_class(Gameplay.screen, 0, 0, Gameplay.all_sprites, Gameplay.enemy_bullets, Gameplay.player, Gameplay.enemy_sprites)
+            else:
+                enemy = enemy_class(Gameplay.screen, 0, 0, Gameplay.all_sprites, Gameplay.enemy_bullets, Gameplay.enemy_sprites)
+            if (enemies_width + enemy.rect.width + enemies_width + enemy.rect.width / (len(mixed_row) + 1)) <= screen_width:
+                enemies_width += enemy.rect.width
+                mixed_row.append(enemy)
+                x_margin = enemies_width / len(mixed_row)
+            else:
+                break
+        x_shift = 0
+        for index in range(len(mixed_row)):
+            x_shift += x_margin
+            enemy = mixed_row[index]
+            enemy.rect.x = x_shift
+            enemy.rect.y = y_margin + rows_above * y_margin * 2
+            x_shift += enemy.rect.width
+        return mixed_row
 
     # makes enemies from all given rows join the game
     def spawn_enemies(self, rows):
@@ -198,6 +224,12 @@ class Gameplay:
         for row_xml in rows_xml:
             if row_xml.find('type').text == 'uniform':
                 rows.append(Gameplay.get_uniform_row(self, eval(row_xml.find('enemy_class').text), len(rows)))
+            elif row_xml.find('type').text == 'mixed':
+                enemy_classes = []
+                enemies_xml = row_xml.findall('enemy')
+                for enemy_xml in enemies_xml:
+                    (enemy_classes.append(eval(enemy_xml.text)))
+                rows.append(Gameplay.get_mixed_row(self, enemy_classes, len(rows)))
 
         Gameplay.spawn_enemies(self, rows)
             

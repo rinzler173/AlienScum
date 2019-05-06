@@ -36,8 +36,15 @@
                 <enemy_class>BasicDrone</enemy_class>
             </row>
             <row name="row_3">
-                <type>uniform</type>
-                <enemy_class>BomberDrone</enemy_class>
+                <type>mixed</type>
+                <enemy>BasicDrone</enemy>
+                <enemy>BasicDrone</enemy>
+                <enemy>BomberDrone</enemy>
+                <enemy>Ufo</enemy>
+                <enemy>Ufo</enemy>
+                <enemy>BomberDrone</enemy>
+                <enemy>BasicDrone</enemy>
+                <enemy>BasicDrone</enemy>
             </row>
         </rows>
     </level>
