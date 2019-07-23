@@ -11,6 +11,7 @@ class Bullet(Sprite):
         self.image_copy = self.image.copy()
         self.rect = self.image.get_rect()
         self.screen = screen
+        self.screen_rect = screen.get_rect()
         self.speed = speed
         self.vel_vec = vec(0, 0)
         # make bullet spawn inside center top of the ship (to look like it's coming out of it's canon)
@@ -50,7 +51,10 @@ class Bullet(Sprite):
 
 
     def update(self):
+        if self.rect.bottom <= 0 or self.rect.bottom >= self.screen_rect.height:
+            self.kill()
         self.rect.center += self.vel_vec
+
 
     def blitime(self):
         self.screen.blit(self.image, self.rect)

@@ -21,13 +21,14 @@ class Mob(Sprite):
         # mandatory
         self.config = config
         self.all_sprites = all_sprites
-        self.image = load_image(config.img_file)
         self.death_sounds = []
         for death_file in config.death_sound_files:
             sound = load_sound(death_file)
             self.death_sounds.append(sound)
 
         # optional (but common)
+        if hasattr(config, 'img_file'):
+            self.image = load_image(config.img_file)
         if hasattr(config, 'bullet_img_file'):
             self.bullet_image = load_image(config.bullet_img_file)
             self.shoot_sounds = []
@@ -38,10 +39,11 @@ class Mob(Sprite):
                 self.shoot_sounds.append(sound)
 
         # get rects
-        self.rect = self.image.get_rect()
+        if hasattr(self, "image"):
+            self.rect = self.image.get_rect()
+            self.rect.x = spawn_x
+            self.rect.y = spawn_y
         self.screen_rect = self.screen.get_rect()
-        self.rect.x = spawn_x
-        self.rect.y = spawn_y
 
     def blitime(self):
         self.screen.blit(self.image, self.rect)

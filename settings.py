@@ -1,5 +1,4 @@
-from os import path
-import pygame
+
 
 """Stores most crucial game settings"""
 
@@ -17,6 +16,7 @@ class Game:
     max_expl_vel = 10
     min_expl_rot = -8
     max_expl_rot = 8
+    max_asteroids_on_screen = 15
 
 
 # player settings
@@ -24,7 +24,7 @@ class Config:
     color = 'green'
     img_file = 'player_1.png'
     bullet_img_file = 'player_laser.png'
-    shoot_sound_files = ['player_laser_1.wav']
+    shoot_sound_files = ['player_laser_2.wav']
     death_sound_files = ['player_death_1.wav']
     explosion_anim_dir = 'explosion_1'
     jet_anim_dir = 'jet_1'
@@ -93,6 +93,22 @@ class UfoConfig:
     y_speed = 3.0
     death_sound_files = ['explosion_3.wav', 'explosion_4.wav']
     value = 3
+
+
+class AsteroidConfig:
+    death_sound_files = ["small_asteroid_explosion.wav", "big_asteroid_explosion.wav"]
+    explosion_anim_dir = 'explosion_1'
+    tiny_rot_reach = 60  # degrees per frame
+    tiny_vertical_speed_reach = (5, 9)  # pixels per frame
+    small_rot_reach = 45
+    small_vertical_speed_reach = (4, 7)
+    medium_rot_reach = 25
+    medium_vertical_speed_reach = (3, 6)
+    big_rot_reach = 10
+    big_vertical_speed_reach = (2, 4)
+    common_horizontal_speed_reach = (0, 2)
+
+
 
 
 

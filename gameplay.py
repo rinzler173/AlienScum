@@ -20,131 +20,130 @@ class Gameplay:
         # initialize pygame, setup screen
         pygame.init()
         pygame.mixer.init()
-        Gameplay.save = shelve.open('game_save')
-        Gameplay.running = True
-        Gameplay.can_restart = False
-        Gameplay.manage_death = False
-        Gameplay.manage_victory = False
-        Gameplay.god_mode = Game.god_mode
-        Gameplay.current_level = Gameplay.save['current_level']
-        Gameplay.sounds = {}
-        Gameplay.msg = {}
-        Gameplay.sounds['level_completed'] = utils.load_sound('level_completed.wav')
-        Gameplay.sounds['game_completed'] = utils.load_sound('game_completed.wav')
-        Gameplay.screen = pygame.display.set_mode(Game.screen_res)
+        self.save = shelve.open('game_save')
+        self.running = True
+        self.can_restart = False
+        self.manage_death = False
+        self.manage_victory = False
+        self.god_mode = Game.god_mode
+        self.current_level = self.save['current_level']
+        self.sounds = {}
+        self.msg = {}
+        self.sounds['level_completed'] = utils.load_sound('level_completed.wav')
+        self.sounds['game_completed'] = utils.load_sound('game_completed.wav')
+        self.screen = pygame.display.set_mode(Game.screen_res)
         pygame.display.set_caption(Game.caption)
-        Gameplay.interface_font = pygame.font.match_font(Game.interface_font_name)
-        Gameplay.background_img = utils.load_image(Game.background_img_file)
-        Gameplay.background_rect = Gameplay.background_img.get_rect()
-        Gameplay.clock = pygame.time.Clock()
+        self.interface_font = pygame.font.match_font(Game.interface_font_name)
+        self.background_img = utils.load_image(Game.background_img_file)
+        self.background_rect = self.background_img.get_rect()
+        self.clock = pygame.time.Clock()
 
         # initialize sprites
-        Gameplay.all_sprites = pygame.sprite.Group()
-        Gameplay.enemy_bullets = pygame.sprite.Group()
-        Gameplay.enemy_sprites = pygame.sprite.Group()
-        Gameplay.player_sprites = pygame.sprite.Group()
-        Gameplay.player = Player(Gameplay.screen, Gameplay.all_sprites)
-        Gameplay.player.add(Gameplay.all_sprites, Gameplay.player_sprites)
-        Gameplay.player_score = ScoreCounter(Gameplay.player, Gameplay.save['player_score'], Gameplay.screen, Gameplay.interface_font, 25, RGB.BLACK)
-        Gameplay.msg['game_completed'] = Msg(Gameplay.screen, Gameplay.interface_font, 65, 90, 1, RGB.GREEN,
+        self.all_sprites = pygame.sprite.Group()
+        self.enemy_bullets = pygame.sprite.Group()
+        self.enemy_sprites = pygame.sprite.Group()
+        self.player_sprites = pygame.sprite.Group()
+        self.player = Player(self.screen, self.all_sprites)
+        self.player.add(self.all_sprites, self.player_sprites)
+        self.player_score = ScoreCounter(self.player, self.save['player_score'], self.screen, self.interface_font, 25, RGB.BLACK)
+        self.msg['game_completed'] = Msg(self.screen, self.interface_font, 65, 90, 1, RGB.GREEN,
                                              "Congratulations! Game completed!", Msg.MSG_PULSE)
-        Gameplay.msg['lvl_completed'] = Msg(Gameplay.screen, Gameplay.interface_font, 100, 175, 2, RGB.GREEN, "Victory!", Msg.MSG_PULSE)
-        Gameplay.msg['player_killed'] = Msg(Gameplay.screen, Gameplay.interface_font, 100, 175, 2, RGB.RED, "Game Over!", Msg.MSG_FADE)
-        Gameplay.player_score.add(Gameplay.all_sprites)
-        Gameplay.player_bullets = pygame.sprite.Group()
+        self.msg['lvl_completed'] = Msg(self.screen, self.interface_font, 100, 175, 2, RGB.GREEN, "Victory!", Msg.MSG_PULSE)
+        self.msg['player_killed'] = Msg(self.screen, self.interface_font, 100, 175, 2, RGB.RED, "Game Over!", Msg.MSG_FADE)
+        self.player_score.add(self.all_sprites)
+        self.player_bullets = pygame.sprite.Group()
 
-        Gameplay.enemy_rows = []
-        Gameplay.read_xml(self)
+        self.enemy_rows = []
+        self.read_xml()
 
     def run_gameplay(self):
         # Game loop
-        while Gameplay.running:
+        while self.running:
             # handle events
-            Gameplay.clock.tick(Game.FPS)
-            Gameplay.check_events(self)
-            Gameplay.manage_restart(self)
+            self.clock.tick(Game.FPS)
+            self.check_events()
+            self.manage_restart()
             # update sprites
-            Gameplay.delete_invisible(self)
-            Gameplay.all_sprites.update()
-            Gameplay.check_colissions(self)
+            self.delete_invisible()
+            self.all_sprites.update()
+            self.check_colissions()
             # render graphics
-            Gameplay.screen.blit(Gameplay.background_img, Gameplay.background_rect)
-            Gameplay.all_sprites.draw(Gameplay.screen)
+            self.screen.blit(self.background_img, self.background_rect)
+            self.all_sprites.draw(self.screen)
             pygame.display.flip()
         self.on_gameplay_stop()
 
     # save persistent data
     def on_gameplay_stop(self):
-        Gameplay.save['current_level'] = Gameplay.current_level
-        Gameplay.save['player_score'] = Gameplay.player_score.score
+        self.save['current_level'] = self.current_level
+        self.save['player_score'] = self.player_score.score
 
     def reset_progress(self):
-        Gameplay.current_level = 1
-        Gameplay.player_score.score = 0
+        self.current_level = 1
+        self.player_score.score = 0
 
     # all game loop inner functions below
     def check_events(self):
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
-                Gameplay.on_keydown(self, event)
+                self.on_keydown(event)
             elif event.type == pygame.KEYUP:
-                Gameplay.on_keyup(self, event)
+                self.on_keyup(event)
             elif event.type == pygame.QUIT:
                 sys.exit()
 
     # manages key presses
     def on_keydown(self, event):
         if event.key in (pygame.K_LEFT, pygame.K_a):
-            Gameplay.player.mov_flags['left'] = True
+            self.player.mov_flags['left'] = True
         elif event.key in (pygame.K_RIGHT, pygame.K_d):
-            Gameplay.player.mov_flags['right'] = True
+            self.player.mov_flags['right'] = True
         elif event.key in (pygame.K_DOWN, pygame.K_s):
-            Gameplay.player.mov_flags['down'] = True
+            self.player.mov_flags['down'] = True
         elif event.key in (pygame.K_UP, pygame.K_w):
-            Gameplay.player.mov_flags['up'] = True
+            self.player.mov_flags['up'] = True
         elif event.key == pygame.K_SPACE:
-            bullet = Gameplay.player.shoot()
-            Gameplay.all_sprites.add(bullet)
-            Gameplay.player_bullets.add(bullet)
-        elif event.key == pygame.K_r and Gameplay.can_restart:
-            Gameplay.running = False
-
+            bullet = self.player.shoot()
+            self.all_sprites.add(bullet)
+            self.player_bullets.add(bullet)
+        elif event.key == pygame.K_r and self.can_restart:
+            self.running = False
 
     # manages key releases
     def on_keyup(self, event):
         if event.key in (pygame.K_LEFT, pygame.K_a):
-            Gameplay.player.mov_flags['left'] = False
+            self.player.mov_flags['left'] = False
         elif event.key in (pygame.K_RIGHT, pygame.K_d):
-            Gameplay.player.mov_flags['right'] = False
+            self.player.mov_flags['right'] = False
         elif event.key in (pygame.K_DOWN, pygame.K_s):
-            Gameplay.player.mov_flags['down'] = False
+            self.player.mov_flags['down'] = False
         elif event.key in (pygame.K_UP, pygame.K_w):
-            Gameplay.player.mov_flags['up'] = False
+            self.player.mov_flags['up'] = False
 
     # creates as many enemies of given class as can fit a single row
     # returns list representing the row
     # rows above argument should be combined height of all rows above (without margins)
     def get_uniform_row(self, enemy_class, rows_above):
-        enemy = enemy_class(Gameplay.screen, 0, 0, Gameplay.all_sprites, Gameplay.enemy_bullets, Gameplay.enemy_sprites)
-        y_margin = Gameplay.screen.get_rect().height * .09
-        fittable_enemies = int(Gameplay.screen.get_rect().width / (enemy.rect.width * 2))
+        enemy = enemy_class(self.screen, 0, 0, self.all_sprites, self.enemy_bullets, self.enemy_sprites)
+        y_margin = self.screen.get_rect().height * .09
+        fittable_enemies = int(self.screen.get_rect().width / (enemy.rect.width * 2))
         uniform_row = []
         for index in range(fittable_enemies):
-            uniform_row.append(enemy_class(Gameplay.screen, enemy.rect.width+(enemy.rect.width*2*index), y_margin + rows_above * y_margin * 2,
-                                           Gameplay.all_sprites, Gameplay.enemy_bullets, Gameplay.enemy_sprites))
+            uniform_row.append(enemy_class(self.screen, enemy.rect.width + (enemy.rect.width * 2 * index), y_margin + rows_above * y_margin * 2,
+                                           self.all_sprites, self.enemy_bullets, self.enemy_sprites))
         return uniform_row
 
     def get_mixed_row(self, enemy_classes, rows_above):
         mixed_row = []
-        y_margin = Gameplay.screen.get_rect().height * .09
+        y_margin = self.screen.get_rect().height * .09
         x_margin = 0
-        screen_width = Gameplay.screen.get_rect().width
+        screen_width = self.screen.get_rect().width
         enemies_width = 0
         for enemy_class in enemy_classes:
             if enemy_class == Ufo:
-                enemy = enemy_class(Gameplay.screen, 0, 0, Gameplay.all_sprites, Gameplay.enemy_bullets, Gameplay.player, Gameplay.enemy_sprites)
+                enemy = enemy_class(self.screen, 0, 0, self.all_sprites, self.enemy_bullets, self.player, self.enemy_sprites)
             else:
-                enemy = enemy_class(Gameplay.screen, 0, 0, Gameplay.all_sprites, Gameplay.enemy_bullets, Gameplay.enemy_sprites)
+                enemy = enemy_class(self.screen, 0, 0, self.all_sprites, self.enemy_bullets, self.enemy_sprites)
             if (enemies_width + enemy.rect.width + enemies_width + enemy.rect.width / (len(mixed_row) + 1)) <= screen_width:
                 enemies_width += enemy.rect.width
                 mixed_row.append(enemy)
@@ -164,56 +163,56 @@ class Gameplay:
     def spawn_enemies(self, rows):
         for row in rows:
             for enemy in row:
-                Gameplay.all_sprites.add(enemy)
-                Gameplay.enemy_sprites.add(enemy)
+                self.all_sprites.add(enemy)
+                self.enemy_sprites.add(enemy)
 
     def check_colissions(self):
-        hits = pygame.sprite.groupcollide(Gameplay.enemy_sprites, Gameplay.player_bullets, True, True)
+        hits = pygame.sprite.groupcollide(self.enemy_sprites, self.player_bullets, True, True)
         for hit in hits:
             hit.onDestroy()
-            Gameplay.player_score.score_kill(hit)
-            if len(Gameplay.enemy_sprites) == 0:
-                if Gameplay.current_level < Game.levels:
-                    Gameplay.all_sprites.add(Gameplay.msg['lvl_completed'])
-                    Gameplay.sounds['level_completed'].play()
-                    Gameplay.manage_victory = True
+            self.player_score.score_kill(hit)
+            if len(self.enemy_sprites) == 0:
+                if self.current_level < Game.levels:
+                    self.all_sprites.add(self.msg['lvl_completed'])
+                    self.sounds['level_completed'].play()
+                    self.manage_victory = True
                 else:
-                    Gameplay.all_sprites.add(Gameplay.msg['game_completed'])
-                    Gameplay.sounds['game_completed'].play()
-                    Gameplay.reset_progress(self)
-                Gameplay.player.fly_away()
+                    self.all_sprites.add(self.msg['game_completed'])
+                    self.sounds['game_completed'].play()
+                    self.reset_progress()
+                self.player.fly_away()
 
-        if not Gameplay.god_mode:
-            hits = pygame.sprite.groupcollide(Gameplay.player_sprites, Gameplay.enemy_bullets, True, True)
+        if not self.god_mode:
+            hits = pygame.sprite.groupcollide(self.player_sprites, self.enemy_bullets, True, True)
             for hit in hits:
                 hit.onDestroy()
-                Gameplay.all_sprites.add(Gameplay.msg['player_killed'])
-                Gameplay.manage_death = True
-                Gameplay.player_score.score = 0
+                self.all_sprites.add(self.msg['player_killed'])
+                self.manage_death = True
+                self.player_score.score = 0
 
     # deletes sprites gone out of screen
     def delete_invisible(self):
-        for object in Gameplay.all_sprites:
+        for object in self.all_sprites:
             if object.rect.bottom < 0 or object.rect.top > Game.screen_res[1]:
                 object.kill()
 
     def manage_restart(self):
-        if Gameplay.manage_death:
-            Gameplay.can_restart = True
-            if (not Gameplay.msg['player_killed'].alive()) and Gameplay.manage_death:
-                prompt = Msg(Gameplay.screen, Gameplay.interface_font, 40, 50, 1, RGB.GREEN, "Press R to restart!", Msg.MSG_PULSE)
-                Gameplay.all_sprites.add(prompt)
-                Gameplay.manage_death = False
-        elif Gameplay.manage_victory:
-            if not Gameplay.player.alive():
-                if Gameplay.current_level < Game.levels:
-                    Gameplay.current_level += 1
-                Gameplay.running = False
+        if self.manage_death:
+            self.can_restart = True
+            if (not self.msg['player_killed'].alive()) and self.manage_death:
+                prompt = Msg(self.screen, self.interface_font, 40, 50, 1, RGB.GREEN, "Press R to restart!", Msg.MSG_PULSE)
+                self.all_sprites.add(prompt)
+                self.manage_death = False
+        elif self.manage_victory:
+            if not self.player.alive():
+                if self.current_level < Game.levels:
+                    self.current_level += 1
+                self.running = False
 
     def read_xml(self):
         xml_path = os.path.join(os.path.dirname(__file__), Game.lvl_desc_file)
         tree = et.parse(xml_path)
-        lvl_name = "level_"+str(Gameplay.current_level)
+        lvl_name = "level_"+str(self.current_level)
         levels = tree.getroot()
         lvl = None
         for level in levels:
@@ -223,15 +222,15 @@ class Gameplay:
         rows = []
         for row_xml in rows_xml:
             if row_xml.find('type').text == 'uniform':
-                rows.append(Gameplay.get_uniform_row(self, eval(row_xml.find('enemy_class').text), len(rows)))
+                rows.append(self.get_uniform_row(eval(row_xml.find('enemy_class').text), len(rows)))
             elif row_xml.find('type').text == 'mixed':
                 enemy_classes = []
                 enemies_xml = row_xml.findall('enemy')
                 for enemy_xml in enemies_xml:
                     (enemy_classes.append(eval(enemy_xml.text)))
-                rows.append(Gameplay.get_mixed_row(self, enemy_classes, len(rows)))
+                rows.append(self.get_mixed_row(enemy_classes, len(rows)))
 
-        Gameplay.spawn_enemies(self, rows)
+        self.spawn_enemies(rows)
             
 
 

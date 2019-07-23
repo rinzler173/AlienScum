@@ -25,23 +25,12 @@ class Player(Mob):
 
     # update visible properties
     def update(self):
-        if not self.departing:
-            if self.mov_flags['left'] and (self.rect.left > Config.horizontal_margin):
-                self.acceleration.x = -1.0
-            elif self.mov_flags['right'] and (self.rect.right <= (self.screen_rect.width - Config.horizontal_margin)):
-                self.acceleration.x = 1.0
-            elif self.mov_flags['down'] and (self.rect.bottom <= (self.screen_rect.height - Config.bottom_margin)):
-                pass
-            elif self.mov_flags['up'] and (self.rect.top > (self.screen_rect.height -
-                                        (Config.bottom_margin + self.rect.height + Config.vertical_leeway * 2))):
-                pass
-            else:
-                self.acceleration = Vec(0, 0)
-
+        self.manage_pilotage()
         self.acceleration.x += self.velocity.x * -0.05
         self.pos += self.velocity + self.acceleration/2
         self.velocity += self.acceleration
         self.rect.center = self.pos
+
     # returns bullet entity that can be added to sprites group
     def shoot(self):
         bullet = Bullet(self.bullet_image, self.screen, self.rect, Config.bullet_speed)
@@ -56,7 +45,20 @@ class Player(Mob):
         self.acceleration.y = -0.04
         self.all_sprites.add(JetAnimation(self.screen, self.config.jet_anim_dir, self))
 
-
+    #  player_controlled pilotage, can be overwritten
+    def manage_pilotage(self):
+        if not self.departing:
+            if self.mov_flags['left'] and (self.rect.left > Config.horizontal_margin):
+                self.acceleration.x = -1.0
+            elif self.mov_flags['right'] and (self.rect.right <= (self.screen_rect.width - Config.horizontal_margin)):
+                self.acceleration.x = 1.0
+            elif self.mov_flags['down'] and (self.rect.bottom <= (self.screen_rect.height - Config.bottom_margin)):
+                pass
+            elif self.mov_flags['up'] and (self.rect.top > (self.screen_rect.height -
+                                        (Config.bottom_margin + self.rect.height + Config.vertical_leeway * 2))):
+                pass
+            else:
+                self.acceleration = Vec(0, 0)
 
 
 
