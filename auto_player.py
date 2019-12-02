@@ -2,6 +2,7 @@ from player import Player
 from pygame import Vector2 as Vec
 import random
 
+
 class AutoPlayer(Player):
     """autonomous, computer-controlled player entity"""
     def __init__(self, screen, all_sprites, target_sprites, bullet_sprites):
@@ -11,25 +12,22 @@ class AutoPlayer(Player):
         self.rect.centerx = self.screen_rect.centerx
         self.rect.centery = self.screen_rect.height*3/4
         self.pos = self.rect.center
-        self.original_pos = Vec(self.rect.center)
-        self.moving_x = False
-        self.moving_y = False
+        self.original_pos = self.pos
         self.correcting_x = False
         self.correcting_y = False
-        self.current_x_drift = 0
-        self.max_x_drift = 0
-        self.x_drift_vel = 0
-        self.current_y_drift = 0
-        self.max_y_drift = 0
-        self.y_drift_vel = 0
-
+        self.max_drift = [0, 0]
 
     def update(self):
-        self.manage_pilotage()
-        self.move_around()
+        if not self.departing:
+            self.move_around()
+            self.manage_pilotage()
+            self.pos += self.velocity
+            self.rect.center = self.pos
+        else:
+            super().update()
 
     def manage_pilotage(self):
-        if not self.departing and len(self.bullets) == 0:
+        if len(self.bullets) == 0:
             #  any target
             for target in self.targets:
                 #  at least as close as 2/3 of the screen on y axis
@@ -41,44 +39,28 @@ class AutoPlayer(Player):
 
     def move_around(self):
         # x axis
-        if not self.moving_x:
-            self.x_drift_vel = random.choice((-1, 1))
-            self.max_x_drift = random.randint(30, 60)
-            self.current_x_drift = 0
-            self.moving_x = True
+        if self.velocity.x == 0:
+            self.velocity[0] = random.choice((-1, 1))
+            self.max_drift[0] = random.randint(35, 50) * self.velocity[0]
 
-        if self.current_x_drift < self.max_x_drift and not self.correcting_x:
-            self.current_x_drift += 1
-            self.rect.centerx += self.x_drift_vel
-        elif not self.correcting_x:
-            self.x_drift_vel = -self.x_drift_vel
+        if self.original_pos[0] + self.max_drift[0] == self.pos[0]:
+            self.velocity[0] *= -1
             self.correcting_x = True
-        elif self.correcting_x and self.current_x_drift > 0:
-            self.current_x_drift -= 1
-            self.rect.centerx += self.x_drift_vel
-        else:
+        if self.correcting_x and self.pos[0] == self.original_pos[0]:
             self.correcting_x = False
-            self.moving_x = False
+            self.velocity.x = 0
 
         # y axis
-        if not self.moving_y:
-            self.y_drift_vel = random.choice((-1, 1))
-            self.max_y_drift = random.randint(20, 40)
-            self.current_y_drift = 0
-            self.moving_y = True
+        if self.velocity.y == 0:
+            self.velocity[0] = random.choice((-1, 1))
+            self.max_drift[0] = random.randint(35, 50) * self.velocity[0]
 
-        if self.current_y_drift < self.max_y_drift and not self.correcting_y:
-            self.current_y_drift += 1
-            self.rect.centery += self.y_drift_vel
-        elif not self.correcting_y:
-            self.y_drift_vel = -self.y_drift_vel
-            self.correcting_y = True
-        elif self.correcting_y and self.current_y_drift > 0:
-            self.current_y_drift -= 1
-            self.rect.centery += self.y_drift_vel
-        else:
-            self.correcting_y = False
-            self.moving_y = False
+        if self.original_pos[0] + self.max_drift[0] == self.pos[0]:
+            self.velocity[0] *= -1
+            self.correcting_x = True
+        if self.correcting_x and self.pos[0] == self.original_pos[0]:
+            self.correcting_x = False
+            self.velocity.x = 0
 
 
 

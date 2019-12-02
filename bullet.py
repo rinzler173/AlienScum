@@ -49,12 +49,10 @@ class Bullet(Sprite):
             self.vel_vec.x = -self.vel_vec.y * (1-(self.rotation - 270) / 90)
             self.vel_vec.y += self.vel_vec.x
 
-
     def update(self):
         if self.rect.bottom <= 0 or self.rect.bottom >= self.screen_rect.height:
             self.kill()
         self.rect.center += self.vel_vec
-
 
     def blitime(self):
         self.screen.blit(self.image, self.rect)

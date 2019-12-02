@@ -1,6 +1,7 @@
 from pygame.sprite import Sprite
 from pygame.font import Font
 
+
 class GameplayMsg(Sprite):
     MSG_FADE = 1
     MSG_PULSE = 2
@@ -20,7 +21,6 @@ class GameplayMsg(Sprite):
         self.image = self.font.render(str(self.text), True, self.color)
         self.rect = self.image.get_rect()
         self.growing = True
-
 
     def update(self):
         self.font = Font(self.font_name, self.current_size)

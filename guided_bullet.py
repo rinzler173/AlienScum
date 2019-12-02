@@ -1,9 +1,9 @@
 import pygame as pg
-vec = pg.math.Vector2
-from pygame.sprite import Sprite
-
 import pygame
 import math
+from pygame.sprite import Sprite
+vec = pg.math.Vector2
+
 
 class GuidedBullet(Sprite):
     def __init__(self, image, screen, shooter_rect, speed, target):

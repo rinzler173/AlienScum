@@ -2,12 +2,13 @@
 
 """Stores most crucial game settings"""
 
+
 # environment settings
 class Game:
     screen_res = 1536, 864  # full hd * 0,8
     caption = 'Alien Scum'
     background_img_file = 'background.png'
-    interface_font_name = 'arial'
+    interface_font_name = 'times'
     lvl_desc_file = "levels.xml"
     levels = 3
     FPS = 60
@@ -107,12 +108,3 @@ class AsteroidConfig:
     big_rot_reach = 10
     big_vertical_speed_reach = (2, 4)
     common_horizontal_speed_reach = (0, 2)
-
-
-
-
-
-
-
-
-
