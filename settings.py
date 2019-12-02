@@ -12,7 +12,7 @@ class Game:
     lvl_desc_file = "levels.xml"
     levels = 3
     FPS = 60
-    god_mode = True  # for testing only
+    god_mode = False  # for testing only
     min_expl_vel = -10
     max_expl_vel = 10
     min_expl_rot = -8
